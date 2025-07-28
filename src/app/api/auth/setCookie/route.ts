@@ -1,28 +1,25 @@
-import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   const body = await request.json();
   const token = body.token;
+  const isProduction = process.env.NODE_ENV === "production";
 
   if (!token) {
-    return new Response(JSON.stringify({ error: "Token missing" }), {
-      status: 400,
-    });
+    return NextResponse.json({ error: "Token missing" }, { status: 400 });
   }
 
-  const cookieStore = await cookies();
+  const response = NextResponse.json({ message: "Token stored in cookie" });
 
-  cookieStore.set("accessToken", token, {
+  response.cookies.set("accessToken", token, {
     httpOnly: true,
-    secure: true,
+    secure: isProduction,
     sameSite: "strict",
     path: "/",
     maxAge: 60 * 60 * 24, // 1 day
   });
 
-  return new Response(JSON.stringify({ message: "Token stored in cookie" }), {
-    status: 200,
-  });
+  return response;
 }
 
 

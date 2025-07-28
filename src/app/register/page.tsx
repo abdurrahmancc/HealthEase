@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import Link from "next/link";
@@ -16,6 +16,7 @@ type RegisterFormData = {
 };
 
 const Register = () => {
+    const [isLogin, setIsLogin] = useState(false);
   const router = useRouter()
   const {
     register,
@@ -28,6 +29,7 @@ const Register = () => {
   const password = watch("password");
 
 const onSubmit = async (data: RegisterFormData) => {
+   setIsLogin(true);
   if (data.password !== data.confirmPassword) {
     toast.error("Passwords do not match");
     return;
@@ -44,13 +46,15 @@ const onSubmit = async (data: RegisterFormData) => {
   } catch (error: any) {
     console.log(error);
     toast.error("Registration failed: " + (error?.response?.data?.message || error?.message));
-  }
+  }finally {
+      setIsLogin(false);
+    }
 };
 
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-100">
-      <div className="w-full max-w-md bg-white text-black shadow-2xl p-8 rounded-2xl">
+    <div className="min-h-[calc(100vh-117px)] flex items-center justify-center bg-base-100">
+      <div className="w-full max-w-md bg-base-300 text-white shadow-2xl p-8 rounded-2xl">
         <h2 className="text-2xl font-bold text-center text-primary mb-6">
           Sign Up
         </h2>
@@ -59,12 +63,12 @@ const onSubmit = async (data: RegisterFormData) => {
           {/*================ Full Name ================ */}
           <div>
             <label className="label">
-              <span className="label-text text-black">First Name</span>
+              <span className="label-text text-white">First Name</span>
             </label>
             <input
               type="text"
               placeholder="Enter Your first name"
-              className="input input-bordered w-full bg-white text-black border-gray-300"
+              className="input input-bordered w-full bg-base-100 text-white border-gray-500"
               {...register("firstName", { required: "First name is required" })}
             />
             {errors.firstName && (
@@ -74,12 +78,12 @@ const onSubmit = async (data: RegisterFormData) => {
 
           <div>
             <label className="label">
-              <span className="label-text text-black">Last Name</span>
+              <span className="label-text text-white">Last Name</span>
             </label>
             <input
               type="text"
               placeholder="Enter Your last name"
-              className="input input-bordered w-full bg-white text-black border-gray-300"
+              className="input input-bordered w-full bg-base-100 text-white border-gray-500"
               {...register("lastName", { required: "Last name is required" })}
             />
             {errors.lastName && (
@@ -89,12 +93,12 @@ const onSubmit = async (data: RegisterFormData) => {
           {/*================  Email ================ */}
           <div>
             <label className="label">
-              <span className="label-text text-black">Email Address</span>
+              <span className="label-text text-white">Email Address</span>
             </label>
             <input
               type="email"
               placeholder="Your email"
-              className="input input-bordered w-full bg-white text-black border-gray-300"
+              className="input input-bordered w-full bg-base-100 text-white border-gray-500"
               {...register("email", {
                 required: "Email is required",
                 pattern: {
@@ -111,12 +115,12 @@ const onSubmit = async (data: RegisterFormData) => {
           {/*================  Password ================ */}
           <div>
             <label className="label">
-              <span className="label-text text-black">Password</span>
+              <span className="label-text text-white">Password</span>
             </label>
             <input
               type="password"
               placeholder="Enter password"
-              className="input input-bordered w-full bg-white text-black border-gray-300"
+              className="input input-bordered w-full bg-base-100 text-white border-gray-500"
               {...register("password", {
                 required: "Password is required",
                 minLength: {
@@ -133,12 +137,12 @@ const onSubmit = async (data: RegisterFormData) => {
           {/*================  Confirm Password ================ */}
           <div>
             <label className="label">
-              <span className="label-text text-black">Confirm Password</span>
+              <span className="label-text text-white">Confirm Password</span>
             </label>
             <input
               type="password"
               placeholder="Confirm password"
-              className="input input-bordered w-full bg-white text-black border-gray-300"
+              className="input input-bordered w-full bg-base-100 text-white border-gray-500"
               {...register("confirmPassword", {
                 required: "Please confirm your password",
                 validate: (value) =>
@@ -151,13 +155,16 @@ const onSubmit = async (data: RegisterFormData) => {
               </p>
             )}
           </div>
-
           <button type="submit" className="btn btn-primary w-full">
-            Create Account
+            {isLogin ? (
+              <span className="loading loading-spinner  loading-sm"></span>
+            ) : (
+              <span>Create Account</span>
+            )}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-sm text-gray-600">
+        <p className="mt-4 text-center text-sm text-white">
           Already have an account?{" "}
           <Link href="/login" className="text-primary font-medium">
             Login

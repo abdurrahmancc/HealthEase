@@ -20,7 +20,6 @@ const Login = () => {
     formState: { errors },
   } = useForm<LoginFormInputs>();
   const [isLogin, setIsLogin] = useState(false);
-  const [tokenLoading, setTokenLoading] = useState(false);
   const router = useRouter()
 
   const onSubmit = async (data: LoginFormInputs) => {
@@ -29,8 +28,8 @@ const Login = () => {
       const response = await axios.post("https://localhost:7155/v1/api/login", data);
       if (response.status === 200) {
         const token = response.data.data.token;
-        setCookie(token);
-        router.push("/dashboard");
+       await setCookie(token);
+        router.push("/patient");
       } else {
         toast.error("Login failed: Invalid credentials");
       }
@@ -41,16 +40,6 @@ const Login = () => {
       setIsLogin(false);
     }
   };
-
-  const fetchUserToken = async () => {
-    try {
-      const response = await axios.get("/api/auth/getCookie", { withCredentials: true });
-      console.log("Token from cookie:", response.data.token);
-    } catch (error) {
-      console.error("Error fetching token:", error);
-    }
-  };
-
 
   const handleAdminLogin = (email: string, password: string) => {
     onSubmit({ email, password });
@@ -65,8 +54,8 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-100">
-      <div className="w-full max-w-md bg-white text-black shadow-2xl p-8 rounded-2xl">
+    <div className="min-h-[calc(100vh-117px)] flex items-center justify-center bg-base-100">
+      <div className="w-full max-w-md bg-base-300 text-black shadow-2xl p-8 rounded-2xl">
         <h2 className="text-2xl font-bold text-center text-primary mb-6">
           Login
         </h2>
@@ -75,12 +64,12 @@ const Login = () => {
           {/*=========== Email ==========*/}
           <div>
             <label className="label">
-              <span className="label-text text-black">Email Address</span>
+              <span className="label-text text-white">Email Address</span>
             </label>
             <input
               type="email"
               placeholder="Your email"
-              className="input input-bordered w-full bg-white text-black border-gray-300"
+              className="input input-bordered w-full bg-base-100 text-white border-gray-500"
               {...register("email", {
                 required: "Email is required",
                 pattern: {
@@ -97,12 +86,12 @@ const Login = () => {
           {/*=========== Password ==========*/}
           <div>
             <label className="label">
-              <span className="label-text text-black">Password</span>
+              <span className="label-text text-white">Password</span>
             </label>
             <input
               type="password"
               placeholder="Enter password"
-              className="input input-bordered w-full bg-white text-black border-gray-300"
+              className="input input-bordered w-full bg-base-100 text-white border-gray-500"
               {...register("password", {
                 required: "Password is required",
                 minLength: {
@@ -118,15 +107,15 @@ const Login = () => {
           {/*=========== Submit Button ==========*/}
 
           <button type="submit" className="btn btn-primary w-full">
-            {isLogin || tokenLoading ? (
-              <span className="loading loading-spinner loading-sm"></span>
+            {isLogin ? (
+              <span className="loading loading-spinner  loading-sm"></span>
             ) : (
               <span>Login</span>
             )}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-sm text-gray-600">
+        <p className="mt-4 text-center text-sm text-white">
           Don't have an account?{" "}
           <Link href="/register" className="text-primary font-medium">
             Sign up
@@ -143,18 +132,18 @@ const Login = () => {
           <button
             className="btn btn-primary btn-sm"
             onClick={() =>
-              handleAgentLogin("deliveryagent@gmail.com", "deliveryagent@")
+              handleAgentLogin("patient@gmail.com", "patient@")
             }
           >
-            Agent
+            patient
           </button>
           <button
             className="btn btn-primary btn-sm"
             onClick={() =>
-              handleCustomerLogin("customer@gmail.com", "customer@")
+              handleCustomerLogin("doctor@gmail.com", "doctor@")
             }
           >
-            Customer
+            Doctor
           </button>
         </div>
       </div>
