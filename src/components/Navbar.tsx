@@ -1,3 +1,4 @@
+import { SignInButton, UserButton } from '@clerk/nextjs';
 import React from 'react';
 import { VscThreeBars } from "react-icons/vsc";
 
@@ -68,6 +69,8 @@ const Navbar = () => {
                                 <li><a>Logout</a></li>
                             </ul>
                         </div>
+                        {/* <SignInButton mode='modal'/>
+                        <UserButton/> */}
                     </div>
                 </nav>
             </div>

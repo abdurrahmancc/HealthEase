@@ -5,6 +5,7 @@ import ToastProvider from "@/components/ToastProvider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BreadcrumWrapper from "@/components/breadcrum/BreadcrumWrapper";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,16 +24,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" data-theme="night">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ToastProvider />
-        <Navbar />
-        <BreadcrumWrapper />
-        {children}
-        <Footer />
-      </body>
-    </html>
+    // <ClerkProvider>
+      <html lang="en" data-theme="night">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <ToastProvider />
+          <Navbar />
+          <BreadcrumWrapper />
+          {children}
+          <Footer />
+        </body>
+      </html>
+    // </ClerkProvider>
   );
 }

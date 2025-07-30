@@ -17,6 +17,7 @@ const Login = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<LoginFormInputs>();
   const [isLogin, setIsLogin] = useState(false);
@@ -25,11 +26,27 @@ const Login = () => {
   const onSubmit = async (data: LoginFormInputs) => {
     setIsLogin(true);
     try {
-      const response = await axios.post("https://localhost:7155/v1/api/login", data);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_baseURL}/v1/api/login`, data);
       if (response.status === 200) {
         const token = response.data.data.token;
-       await setCookie(token);
-        router.push("/patient");
+        await setCookie(token);
+        // console.log("response.data.data.role", response.data.data.role.toLowerCase())
+        const role = response.data.data.role?.toLowerCase() || "patient";
+
+        if (role === "patient") {
+          router.push("/patient");
+          console.log("patient1")
+        } else if (role === "doctor") {
+          router.push("/doctor");
+          console.log("doctor")
+        } else if (role === "admin") {
+          router.push("/admin");
+          console.log("admin")
+        } else {
+          router.push("/patient");
+          console.log("patient2")
+        }
+
       } else {
         toast.error("Login failed: Invalid credentials");
       }
@@ -42,15 +59,18 @@ const Login = () => {
   };
 
   const handleAdminLogin = (email: string, password: string) => {
-    onSubmit({ email, password });
+    setValue("email", email);
+    setValue("password", password);
   };
 
   const handleAgentLogin = (email: string, password: string) => {
-    onSubmit({ email, password });
+    setValue("email", email);
+    setValue("password", password);
   };
 
   const handleCustomerLogin = (email: string, password: string) => {
-    onSubmit({ email, password });
+    setValue("email", email);
+    setValue("password", password);
   };
 
   return (
