@@ -20,13 +20,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     const [client] = useState(() => new QueryClient());
     let { user, loading, error, setRefreshGetLoginUser } = useLoginUser();
-    const { uploadLoading, handleUploadPhotoUrl } = useUploadPhotoUrl(setRefreshGetLoginUser, user?.id)
+    const { uploadLoading, handleUploadPhotoUrl } = useUploadPhotoUrl(setRefreshGetLoginUser)
     const router = useRouter()
     const pathname = usePathname();
 
 
-    const handleLogOut = () => {
-        removeCookie()
+    const handleLogOut = async () => {
+       await removeCookie()
         router.push("/login")
     }
 

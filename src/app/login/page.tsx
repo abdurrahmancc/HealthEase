@@ -84,19 +84,21 @@ const Login = () => {
           {/*=========== Email ==========*/}
           <div>
             <label className="label">
-              <span className="label-text text-white">Email Address</span>
+              <span className="label-text text-white">Email Address or Username</span>
             </label>
             <input
-              type="email"
-              placeholder="Your email"
+              type="text"
+              placeholder="Your email or username"
               className="input input-bordered w-full bg-base-100 text-white border-gray-500"
               {...register("email", {
-                required: "Email is required",
-                pattern: {
-                  value: /\S+@\S+\.\S+/,
-                  message: "Invalid email address",
+                required: "Email or Username is required",
+                validate: (value) => {
+                  const isEmail = /\S+@\S+\.\S+/.test(value);
+                  const isUsername = /^[a-zA-Z0-9_]{3,20}$/.test(value);
+                  return isEmail || isUsername || "Enter a valid email or username";
                 },
               })}
+
             />
             {errors.email && (
               <p className="text-error text-sm">{errors.email.message}</p>

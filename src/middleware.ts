@@ -5,52 +5,54 @@ import { clerkMiddleware } from '@clerk/nextjs/server';
 
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("accessToken")?.value;
+  const { pathname, origin } = request.nextUrl;
+  const path = pathname.toLowerCase();
+  const user = await getUserFromToken(token);
+
   if (!token) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    if (pathname === "/Login") {
+      return NextResponse.redirect(new URL("/login", origin));
+    }
+    if (pathname === "/Register") {
+      return NextResponse.redirect(new URL("/register", origin));
+    }
+    if (path === "/login" || path === "/register") {
+      return NextResponse.next();
+    }
+
+    return NextResponse.redirect(new URL("/login", origin));
   }
 
-  const { pathname } = request.nextUrl;
-
-  const user = await getUserFromToken(token);
 
 
   if (!user && !pathname.startsWith("/login")) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/login", origin));
   }
+
 
   const role = (user?.UserRole as string)?.toLowerCase() || "";
 
-  // Role-based access
+
+  if (user && (path === "/login" || path === "/register")) {
+    return NextResponse.redirect(new URL(`/${role}`, origin));
+  }
+
+
   if (pathname.startsWith("/admin") && role !== "admin") {
-    return NextResponse.redirect(new URL(`/${role}`, request.url));
+    return NextResponse.redirect(new URL(`/${role}`, origin));
   }
 
   if (pathname.startsWith("/patient") && role !== "patient") {
-    return NextResponse.redirect(new URL(`/${role}`, request.url));
+    return NextResponse.redirect(new URL(`/${role}`, origin));
   }
 
   if (pathname.startsWith("/doctor") && role !== "doctor") {
-    return NextResponse.redirect(new URL(`/${role}`, request.url));
+    return NextResponse.redirect(new URL(`/${role}`, origin));
   }
 
   return NextResponse.next();
 }
 
-// export const config = {
-//   matcher: ["/patient/:path*", "/doctor/:path*", "/admin/:path*"],
-// };
-
-
-
-
-
-export default clerkMiddleware();
-
 export const config = {
-  matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
-    '/(api|trpc)(.*)',
-  ],
+  matcher: ["/patient/:path*", "/doctor/:path*", "/admin/:path*", "/login", "/register", "/Login", "/Register"],
 };

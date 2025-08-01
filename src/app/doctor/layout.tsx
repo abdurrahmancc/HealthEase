@@ -13,12 +13,12 @@ import { FaUserCircle } from 'react-icons/fa';
 
 const DoctorLayout = ({ children }: { children: React.ReactNode }) => {
     let { user, loading, error, setRefreshGetLoginUser } = useLoginUser();
-    const { uploadLoading, handleUploadPhotoUrl } = useUploadPhotoUrl(setRefreshGetLoginUser, user?.id)
+    const { uploadLoading, handleUploadPhotoUrl } = useUploadPhotoUrl(setRefreshGetLoginUser)
     const router = useRouter()
     const pathname = usePathname();
 
-    const handleLogOut = () => {
-        removeCookie()
+    const handleLogOut = async () => {
+        await removeCookie()
         router.push("/login")
     }
 

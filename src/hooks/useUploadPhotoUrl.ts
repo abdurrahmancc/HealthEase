@@ -3,14 +3,12 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 
 export const useUploadPhotoUrl = (
-  setRefreshGetLoginUser: React.Dispatch<React.SetStateAction<boolean>>,
-  userId: string | undefined
-) => {
+  setRefreshGetLoginUser: React.Dispatch<React.SetStateAction<boolean>>) => {
   const [uploadLoading, setUploadLoading] = useState(false);
 
   const handleUploadPhotoUrl = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file || !userId) return;
+    if (!file) return;
 
     setUploadLoading(true);
 
@@ -19,7 +17,7 @@ export const useUploadPhotoUrl = (
 
     try {
       await axios.post(
-        `${process.env.NEXT_PUBLIC_baseURL}/v1/api/Files/PhotoUrl?userId=${userId}`,
+        `${process.env.NEXT_PUBLIC_baseURL}/v1/api/Users/UpdatePhotoUrl`,
         formData,
         {
           headers: {
