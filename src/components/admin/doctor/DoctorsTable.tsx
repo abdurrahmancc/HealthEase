@@ -1,16 +1,16 @@
 "use client"
 import { useEffect, useState, useCallback } from "react";
-import UsersTableRow from "./UsersTableRow";
-import UserRoleModal from "./UserRoleModal";
 import axios from "axios";
 import { User } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 import { BiSearchAlt } from "react-icons/bi";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useDebounce from "@/hooks/useDebounce";
-import Pagination from "../Pagination";
+import Pagination from "../../Pagination";
 import { toast } from "react-toastify";
 import { useRouter, useSearchParams } from 'next/navigation';
+import DoctorsTableRow from "./DoctorsTableRow";
+import UserRoleModal from "../../users/UserRoleModal";
 
 interface RoleId {
   id?: string;
@@ -21,8 +21,8 @@ interface SearchFormInputs {
 }
 
 
-const UsersTable = () => {
-  const router = useRouter();
+const DoctorsTable = () => {
+      const router = useRouter();
   const searchParams = useSearchParams();
   const [deleteModal, setDeleteModal] = useState<string | User | null>(null);
   const [inputRoleId, setInputRoleId] = useState<RoleId>({});
@@ -39,16 +39,16 @@ const UsersTable = () => {
   const debouncedSearch = useDebounce(search, 500);
   const [pageNumber, setPageNumber] = useState(pageFromUrl);
   const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
-  const [refetchFlag, setRefetchFlag] = useState(false);
+    const [refetchFlag, setRefetchFlag] = useState(false);
+
 
   useEffect(() => {
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_baseURL}/v1/api/Users/GetUsers?pageNumber=${pageFromUrl}&pageSize=${sizeFromUrl}&search=${searchFromUrl}`, {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_baseURL}/v1/api/Users/GetUsers?pageNumber=${pageFromUrl}&pageSize=${sizeFromUrl}&search=${searchFromUrl}&role=Doctor`, {
           withCredentials: true,
         });
-        console.log("res.data?.data?.items", res.data?.data?.items)
         setUsers(res.data?.data?.items || []);
         setTotalItems(res.data?.data?.totalItems);
         setTotalPages(res.data?.data?.totalPages);
@@ -78,10 +78,14 @@ const UsersTable = () => {
     params.set('Size', size.toString());
     if (searchText) params.set('Search', searchText);
 
-    const newUrl = `/admin/users?${params.toString()}`;
+    const newUrl = `/admin/doctors?${params.toString()}`;
     if (newUrl !== window.location.pathname + window.location.search) {
       router.push(newUrl);
     }
+  };
+
+  const handleRefetch = () => {
+    updateUrl(pageNumber, rowsPerPage, search);
   };
 
 const updatePagination = (page: number, size: number, searchText: string) => {
@@ -95,9 +99,7 @@ const updatePagination = (page: number, size: number, searchText: string) => {
     router.push(newUrl);
   }
 };
-
-
-  return (
+    return (
     <>
       <div className="flex justify-between">
         <div>
@@ -140,13 +142,13 @@ const updatePagination = (page: number, size: number, searchText: string) => {
                   </thead>
                   <tbody className="cursor-pointer">
                     {users?.length > 0 && users.map((user: User, index: number) => (
-                      <UsersTableRow key={user.id} user={user} index={index} setDeleteModal={setDeleteModal} setInputRoleId={setInputRoleId} />
+                      <DoctorsTableRow key={user.id} user={user} index={index} setDeleteModal={setDeleteModal} setInputRoleId={setInputRoleId} />
                     ))}
                   </tbody>
                 </table>
                 {
                   inputRoleId?.id &&
-                  <UserRoleModal inputRoleId={inputRoleId} refetch={()=>setRefetchFlag(prev => !prev)} />
+                  <UserRoleModal inputRoleId={inputRoleId} refetch={()=>setRefetchFlag(prev=> !prev)} />
                 }
               </div>
             </div>
@@ -166,7 +168,7 @@ const updatePagination = (page: number, size: number, searchText: string) => {
       }
 
     </>
-  );
+    );
 };
 
-export default UsersTable;
+export default DoctorsTable;

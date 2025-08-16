@@ -1,4 +1,5 @@
 import { CalendarClock, CalendarDays, ClipboardCheck, Clock, FileText, KeyRound, LayoutDashboard, LogOut, MessageCircleMore, Settings, Shield, Star, User, UserRoundCheck } from "lucide-react";
+import { IoKeyOutline } from "react-icons/io5";
 
 export const adminRoutes = [
 {
@@ -33,7 +34,7 @@ export const adminRoutes = [
     },
     {
         path: "patients",
-        name: "My Patients",
+        name: "Patients",
         icon: User,
     },
     {
@@ -67,7 +68,7 @@ export const adminRoutes = [
         icon: Shield,
     },
     {
-        path: "changePassword",
+        path: "change-password",
         name: "Change Password",
         icon: KeyRound,
     },

@@ -57,7 +57,7 @@ export const doctorRoutes = [
         icon: Shield,
     },
     {
-        path: "changePassword",
+        path: "change-password",
         name: "Change Password",
         icon: KeyRound,
     },

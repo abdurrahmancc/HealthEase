@@ -10,6 +10,19 @@ export const useUploadPhotoUrl = (
     const file = event.target.files?.[0];
     if (!file) return;
 
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Only image files are allowed");
+      return;
+    }
+
+    //  Check max size 500KB
+    const maxSize = 500 * 1024; // 500KB in bytes
+    if (file.size > maxSize) {
+      toast.error("Image size must be less than 500KB");
+      return;
+    }
+
     setUploadLoading(true);
 
     const formData = new FormData();

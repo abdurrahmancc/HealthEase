@@ -45,11 +45,9 @@ const UserRoleModal = ({ inputRoleId, refetch }: UserRoleModalProps) => {
 
     const handleUserStatus = async (role: number) => {
         try {
-            const { data } = await axios.patch(`${process.env.NEXT_PUBLIC_baseURL}/v1/api/Users/UpdateRole?id=${id}&role=${role}`, null, {
-                withCredentials: true,
-            })
-            toast.success("User role updated successfully")
+            await axios.patch(`${process.env.NEXT_PUBLIC_baseURL}/v1/api/Users/UpdateRole?id=${id}&role=${role}`, null, { withCredentials: true })
             refetch()
+            toast.success("User role updated successfully")
             const modalCheckbox = document.getElementById("UserRoleModal") as HTMLInputElement;
             if (modalCheckbox) {
                 modalCheckbox.checked = false;

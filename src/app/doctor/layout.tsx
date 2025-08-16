@@ -6,10 +6,10 @@ import { doctorRoutes } from '@/components/routes/doctor';
 import { Camera, LogOut } from 'lucide-react';
 import { removeCookie } from '@/hooks/useCookies';
 import { useLoginUser } from '@/hooks/useLoginUser';
-import axios from 'axios';
 import { useUploadPhotoUrl } from '@/hooks/useUploadPhotoUrl';
 import Loading from '@/shared/Loading';
 import { FaUserCircle } from 'react-icons/fa';
+import userIcon from "../../../public/icons/userIcon.svg"
 
 const DoctorLayout = ({ children }: { children: React.ReactNode }) => {
     let { user, loading, error, setRefreshGetLoginUser } = useLoginUser();
@@ -21,6 +21,7 @@ const DoctorLayout = ({ children }: { children: React.ReactNode }) => {
         await removeCookie()
         router.push("/login")
     }
+    
 
 
     return (
@@ -28,7 +29,7 @@ const DoctorLayout = ({ children }: { children: React.ReactNode }) => {
             <div className="drawer lg:drawer-open lg:gap-10">
                 <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
                 <div className="drawer-content flex flex-col">
-                    <div className='bg-base-200 p-4 rounded-[10px] h-[calc(100vh-80px)] p'>
+                    <div className='bg-base-200 rounded-[10px] h-[calc(100vh-80px)]'>
                         {children}
                         {
                             loading && <Loading />
@@ -43,8 +44,14 @@ const DoctorLayout = ({ children }: { children: React.ReactNode }) => {
                                 <div className="avatar mx-auto">
                                     <div className="ring-neutral ring-offset-base-100 w-24 rounded-full ring-2 ring-offset-2">
                                         {
-                                            user?.photoUrl ? <img src={user?.photoUrl} /> : <FaUserCircle className='w-24 text-[96px]' />
+                                            user?.photoUrl ? <img src={user?.photoUrl || userIcon.src} onError={(e) => {
+                                                const target = e.target as HTMLImageElement;
+                                                target.onerror = null;
+                                                target.src = userIcon.src;
+                                            }}
+                                            alt={user?.firstName} /> : <FaUserCircle className='w-24 text-[96px]' />
                                         }
+                                        <FaUserCircle className='w-24 text-[96px]' />
                                     </div>
                                     <div className='border !flex items-center justify-center border-gray-100 w-[25px] h-[25px] bg-base-100 rounded-full absolute bottom-3 -right-2 '>
                                         {uploadLoading ? <span className="btn-loading !w-[16px] !h-[16px]"></span> :

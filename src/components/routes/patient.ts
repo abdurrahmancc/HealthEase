@@ -1,4 +1,4 @@
-import { CalendarDays, FileText, LayoutDashboard, MessageCircleMore, Settings, Star } from "lucide-react";
+import { CalendarDays, FileText, KeyRound, LayoutDashboard, MessageCircleMore, Settings, Star } from "lucide-react";
 
 export const patientRoutes = [
   {
@@ -28,7 +28,12 @@ export const patientRoutes = [
   },
   {
     path: "settings",
-    name: "Settings",
+    name: "Profile Settings",
     icon: Settings,
+  },
+  {
+    path: "change-password",
+    name: "Change Password",
+    icon: KeyRound,
   },
 ];

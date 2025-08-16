@@ -1,9 +1,10 @@
+import PatientsTable from '@/components/admin/patient/PatientsTable';
 import React from 'react';
 
 const Patients = () => {
     return (
         <div>
-            patients
+            <PatientsTable/>
         </div>
     );
 };

@@ -128,7 +128,7 @@ const Login = () => {
           </div>
           {/*=========== Submit Button ==========*/}
 
-          <button type="submit" className="btn btn-primary w-full">
+          <button type="submit" className="btn btn-primary w-full rounded-[8px]">
             {isLogin ? (
               <span className="loading loading-spinner  loading-sm"></span>
             ) : (
@@ -139,20 +139,20 @@ const Login = () => {
 
         <p className="mt-4 text-center text-sm text-white">
           Don't have an account?{" "}
-          <Link href="/register" className="text-primary font-medium">
+          <Link href="/register" className="text-primary font-medium ">
             Sign up
           </Link>
         </p>
 
         <div className="flex justify-center gap-5 mt-5">
           <button
-            className="btn btn-primary btn-sm"
+            className="btn btn-primary btn-sm rounded-[8px]"
             onClick={() => handleAdminLogin("admin@gmail.com", "admin@")}
           >
             Admin
           </button>
           <button
-            className="btn btn-primary btn-sm"
+            className="btn btn-primary btn-sm rounded-[8px]"
             onClick={() =>
               handleAgentLogin("patient@gmail.com", "patient@")
             }
@@ -160,7 +160,7 @@ const Login = () => {
             patient
           </button>
           <button
-            className="btn btn-primary btn-sm"
+            className="btn btn-primary btn-sm rounded-[8px]"
             onClick={() =>
               handleCustomerLogin("doctor@gmail.com", "doctor@")
             }
