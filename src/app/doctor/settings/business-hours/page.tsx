@@ -29,7 +29,7 @@ const BusinessHoursForm = () => {
                     });
 
                     return (
-                        <div key={dayField.id} className="border-[0.5px] border-gray-800 rounded-[10px] flex gap-10 items-center mt-5">
+                        <div key={dayField.id} className="border-[0.5px] border-gray-800 rounded-[10px] flex gap-10 items-center">
                             <div className="collapse collapse-arrow join-item relative">
                                 <input type="checkbox" id={`day-${dayIndex}`} />
                                 <div className="collapse-title font-semibold flex justify-between items-center">
@@ -40,7 +40,7 @@ const BusinessHoursForm = () => {
                                         Add Time Slot
                                     </button>
                                 </div>
-                                <div className="collapse-content border-t-[0.5px] border-gray-700">
+                                <div className="collapse-content border-t-[0.5px] border-gray-700 !pb-0">
                                     {slotFields.map((slot, slotIndex) => (
                                         <div className="flex gap-5 items-center">
                                             <div key={slot.id} className="grid md:grid-cols-2 gap-4 mb-2 items-end w-full">

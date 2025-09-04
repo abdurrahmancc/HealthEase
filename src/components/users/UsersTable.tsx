@@ -1,27 +1,36 @@
-"use client"
-import { useEffect, useState, useCallback } from "react";
-import UsersTableRow from "./UsersTableRow";
-import UserRoleModal from "./UserRoleModal";
-import axios from "axios";
-import { User } from "@/types/types";
-import { useQuery } from "@tanstack/react-query";
-import { BiSearchAlt } from "react-icons/bi";
-import { SubmitHandler, useForm } from "react-hook-form";
-import useDebounce from "@/hooks/useDebounce";
-import Pagination from "../Pagination";
-import { toast } from "react-toastify";
+'use client';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { User } from '@/types/types';
+import useDebounce from '@/hooks/useDebounce';
+import Pagination from '../Pagination';
+import { BiSearchAlt } from 'react-icons/bi';
+import { toast } from 'react-toastify';
+import axios from 'axios';
+import UsersTableRow from './UsersTableRow';
+import UserRoleModal from './UserRoleModal';
+import Loading from '@/shared/Loading';
 
 interface RoleId {
   id?: string;
 }
 
-interface SearchFormInputs {
-  search: string;
+interface Props {
+  initialData: {
+    items: User[];
+    totalItems: number;
+    totalPages: number;
+    pageNumber: number;
+    pageSize: number;
+    startPage: number;
+    endPage: number;
+  };
+  initialPage: number;
+  initialSize: number;
+  initialSearch: string;
 }
 
-
-const UsersTable = () => {
+const UsersTable = ({ initialData, initialPage, initialSize, initialSearch }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [deleteModal, setDeleteModal] = useState<string | User | null>(null);
@@ -29,17 +38,18 @@ const UsersTable = () => {
   const pageFromUrl = parseInt(searchParams.get('Page') || '1', 10);
   const sizeFromUrl = parseInt(searchParams.get('Size') || '10', 10);
   const searchFromUrl = searchParams.get('Search') || '';
-  const [users, setUsers] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [totalItems, setTotalItems] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [endPage, setEndPage] = useState(0);
-  const [startPage, setStartPage] = useState(0);
-  const [search, setSearch] = useState(searchFromUrl);
-  const debouncedSearch = useDebounce(search, 500);
-  const [pageNumber, setPageNumber] = useState(pageFromUrl);
-  const [rowsPerPage, setRowsPerPage] = useState(sizeFromUrl);
   const [refetchFlag, setRefetchFlag] = useState(false);
+  const [users, setUsers] = useState<User[]>(initialData.items);
+  const [pageNumber, setPageNumber] = useState(initialPage);
+  const [rowsPerPage, setRowsPerPage] = useState(initialSize);
+  const [search, setSearch] = useState(initialSearch);
+  const [totalItems, setTotalItems] = useState(initialData.totalItems);
+  const [totalPages, setTotalPages] = useState(initialData.totalPages);
+  const [startPage, setStartPage] = useState(initialData.startPage);
+  const [endPage, setEndPage] = useState(initialData.endPage);
+  const [loading, setLoading] = useState(false);
+
+  const debouncedSearch = useDebounce(search, 500);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -48,7 +58,6 @@ const UsersTable = () => {
         const res = await axios.get(`${process.env.NEXT_PUBLIC_baseURL}/v1/api/Users/GetUsers?pageNumber=${pageFromUrl}&pageSize=${sizeFromUrl}&search=${searchFromUrl}`, {
           withCredentials: true,
         });
-        console.log("res.data?.data?.items", res.data?.data?.items)
         setUsers(res.data?.data?.items || []);
         setTotalItems(res.data?.data?.totalItems);
         setTotalPages(res.data?.data?.totalPages);
@@ -96,9 +105,8 @@ const updatePagination = (page: number, size: number, searchText: string) => {
   }
 };
 
-
   return (
-    <>
+ <>
       <div className="flex justify-between">
         <div>
           <form onSubmit={(e) => e.preventDefault()}>
@@ -122,11 +130,15 @@ const updatePagination = (page: number, size: number, searchText: string) => {
         </div>
       </div>
       {
+        loading ?  (
+        <Loading modal={false} size={5} screenHeight={80} />
+      ) :
+
         totalItems > 0 ?
           <div>
             <div className="pt-6">
-              <div className="overflow-x-auto w-full h-full">
-                <table className="table w-full">
+              <div className="overflow-x-auto w-full  h-[calc(100vh-250px)] overflow-y-auto">
+                <table className="table w-full rounded-[10px] border-[1px] border-[rgba(255,255,255,0.05)]">
                   <thead>
                     <tr>
                       <th>#</th>

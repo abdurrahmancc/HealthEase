@@ -12,7 +12,7 @@ import { useUploadPhotoUrl } from '@/hooks/useUploadPhotoUrl';
 
 const PatientLayout = ({ children }: { children: React.ReactNode }) => {
     let { user, loading, error, setRefreshGetLoginUser } = useLoginUser();
-    const { uploadLoading, handleUploadPhotoUrl } = useUploadPhotoUrl(setRefreshGetLoginUser)
+    const { uploadLoading, handleUploadPhotoUrl } = useUploadPhotoUrl()
     const router = useRouter();
     const pathname = usePathname();
 

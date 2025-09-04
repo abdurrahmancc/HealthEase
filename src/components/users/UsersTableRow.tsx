@@ -17,7 +17,7 @@ interface UsersTableRowProps {
 }
 
 
-const UsersTableRow = ({ user, index, setDeleteModal, setInputRoleId }: UsersTableRowProps) => {
+const UsersTableRow = React.memo (({ user, index, setDeleteModal, setInputRoleId }: UsersTableRowProps) => {
     return (
         <tr>
             <td>{index + 1}</td>
@@ -66,6 +66,6 @@ const UsersTableRow = ({ user, index, setDeleteModal, setInputRoleId }: UsersTab
             </td>
         </tr>
     );
-};
+});
 
 export default UsersTableRow;

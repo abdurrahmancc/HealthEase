@@ -8,18 +8,14 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { setCookie } from "@/hooks/useCookies";
 
+
 interface LoginFormInputs {
   email: string;
   password: string;
 }
 
 const Login = () => {
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<LoginFormInputs>();
+  const { register, handleSubmit, setValue, formState: { errors },} = useForm<LoginFormInputs>();
   const [isLogin, setIsLogin] = useState(false);
   const router = useRouter()
 
@@ -28,9 +24,9 @@ const Login = () => {
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_baseURL}/v1/api/login`, data);
       if (response.status === 200) {
+        console.log("response", response)
         const token = response.data.data.token;
         await setCookie(token);
-        // console.log("response.data.data.role", response.data.data.role.toLowerCase())
         const role = response.data.data.role?.toLowerCase() || "patient";
 
         if (role === "patient") {

@@ -1,6 +1,6 @@
 "use client";
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { usePathname, useRouter } from "next/navigation";
 import { doctorRoutes } from '@/components/routes/doctor';
 import { Camera, LogOut } from 'lucide-react';
@@ -10,19 +10,30 @@ import { useUploadPhotoUrl } from '@/hooks/useUploadPhotoUrl';
 import Loading from '@/shared/Loading';
 import { FaUserCircle } from 'react-icons/fa';
 import userIcon from "../../../public/icons/userIcon.svg"
+import { useAppDispatch, useAppSelector } from '@/redux/app/reduxHooks';
+import { fetchAndSetUser } from '@/redux/features/user/userAPI';
+
+
 
 const DoctorLayout = ({ children }: { children: React.ReactNode }) => {
-    let { user, loading, error, setRefreshGetLoginUser } = useLoginUser();
-    const { uploadLoading, handleUploadPhotoUrl } = useUploadPhotoUrl(setRefreshGetLoginUser)
+    // let { user, loading, error, setRefreshGetLoginUser } = useLoginUser();
+    const { uploadLoading, handleUploadPhotoUrl } = useUploadPhotoUrl()
     const router = useRouter()
     const pathname = usePathname();
+    const dispatch = useAppDispatch();
+    const reduxUser = useAppSelector((state) => state.user.user);
+    const reduxUserLoading = useAppSelector((state) => state.user.loading);
+
+ 
+
+    useEffect(() => {
+        dispatch(fetchAndSetUser());
+    }, [dispatch]);
 
     const handleLogOut = async () => {
         await removeCookie()
         router.push("/login")
     }
-    
-
 
     return (
         <div className='container mx-auto py-10'>
@@ -32,7 +43,7 @@ const DoctorLayout = ({ children }: { children: React.ReactNode }) => {
                     <div className='bg-base-200 rounded-[10px] h-[calc(100vh-80px)]'>
                         {children}
                         {
-                            loading && <Loading />
+                            reduxUserLoading && <Loading />
                         }
                     </div>
                 </div>
@@ -44,12 +55,12 @@ const DoctorLayout = ({ children }: { children: React.ReactNode }) => {
                                 <div className="avatar mx-auto">
                                     <div className="ring-neutral ring-offset-base-100 w-24 rounded-full ring-2 ring-offset-2">
                                         {
-                                            user?.photoUrl ? <img src={user?.photoUrl || userIcon.src} onError={(e) => {
+                                            reduxUser?.photoUrl ? <img src={reduxUser?.photoUrl || userIcon.src} onError={(e) => {
                                                 const target = e.target as HTMLImageElement;
                                                 target.onerror = null;
                                                 target.src = userIcon.src;
                                             }}
-                                            alt={user?.firstName} /> : <FaUserCircle className='w-24 text-[96px]' />
+                                                alt={reduxUser?.firstName} /> : <FaUserCircle className='w-24 text-[96px]' />
                                         }
                                         <FaUserCircle className='w-24 text-[96px]' />
                                     </div>
@@ -63,7 +74,7 @@ const DoctorLayout = ({ children }: { children: React.ReactNode }) => {
                                     </div>
                                 </div>
                                 <div>
-                                    <h4 className='text-[20px] font-semibold'>{user?.firstName} {user?.lastName}</h4>
+                                    <h4 className='text-[20px] font-semibold'>{reduxUser?.firstName} {reduxUser?.lastName}</h4>
                                     <p className='text-[14px]'>BDS, MDS - Oral & Maxillofacial Surgery</p>
                                 </div>
                             </div>
@@ -74,11 +85,8 @@ const DoctorLayout = ({ children }: { children: React.ReactNode }) => {
                             const isActive = cleanPath === fullPath;
                             return (
                                 <li key={route.path}>
-                                    <Link
-                                        href={fullPath}
-                                        className={`flex items-center gap-2 px-3 py-2 rounded-md text-[18px] transition-all ${isActive ? "bg-[#000615] text-white" : "hover:bg-base-300"
-                                            }`}
-                                    >
+                                    <Link href={fullPath}
+                                        className={`flex items-center gap-2 px-3 py-2 rounded-md text-[18px] transition-all ${isActive ? "bg-[#000615] text-white" : "hover:bg-base-300"}`}>
                                         {route.icon && (
                                             <route.icon className="w-5 h-5 text-inherit" />
                                         )}
