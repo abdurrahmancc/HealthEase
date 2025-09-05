@@ -1,94 +1,137 @@
 "use client";
-import React, { useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import React from "react";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { DatePicker, TimePicker, Button } from "antd";
+import dayjs from "dayjs";
 
-const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+type BusinessHour = { date: string; from: string; to: string };
+type FormData = { BusinessHours: BusinessHour[] };
 
-type BusinessHour = { from: string; to: string };
-type DayBusinessHours = { day: string; slots: BusinessHour[] };
-type FormData = { BusinessHours: DayBusinessHours[] };
-
-const BusinessHoursForm = () => {
-    const { control, register, handleSubmit, formState: { errors } } = useForm<FormData>({
-        defaultValues: {
-            BusinessHours: days.map(day => ({ day, slots: [{ from: "", to: "" }] })),
-        },
+const DoctorBusinessHoursForm = () => {
+    const { control, handleSubmit, watch } = useForm<FormData>({
+        defaultValues: { BusinessHours: [{ date: "", from: "", to: "" }] },
     });
 
-    const { fields: dayFields } = useFieldArray({ control, name: "BusinessHours" });
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "BusinessHours",
+    });
 
-    const onSubmit = (data: FormData) => console.log(data);
+    const onSubmit = (data: FormData) => {
+        console.log("Doctor Availability:", data);
+        alert("Saved successfully!");
+    };
 
     return (
-        <div className="h-[calc(100vh-220px)] overflow-y-auto p-4">
-            <form onSubmit={handleSubmit(onSubmit)}>
-                {dayFields.map((dayField, dayIndex) => {
-                    const { fields: slotFields, append: appendSlot, remove: removeSlot } = useFieldArray({
-                        control,
-                        name: `BusinessHours.${dayIndex}.slots`,
-                    });
+        <div className="p-4">
+            <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold">Set Your Availability</h2>
+                <Button type="primary" style={{ fontSize: '14px', borderRadius: '0.375rem', fontWeight: "500", backgroundColor: "#1677ff", padding: "10px", height: "45px" }} onClick={() => append({ date: "", from: "", to: "" })}>
+                    Add Availability
+                </Button>
+            </div>
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-5">
+                {fields.map((field, index) => (
+                    <div key={field.id} className="border rounded text-white w-full p-3 flex gap-4 items-end">
+                        <div className="grid grid-cols-3 gap-4 w-full">
+                            <div className="flex flex-col">
+                                <label htmlFor={`BusinessHours.${index}.date`} className="label">
+                                    <span className="label-text text-white">Select Date *</span>
+                                </label>
+                                <Controller name={`BusinessHours.${index}.date`} control={control} rules={{ required: true }} render={({ field }) => (
+                                    <DatePicker id={`BusinessHours.${index}.date`} {...field} value={field.value ? dayjs(field.value, "YYYY-MM-DD") : null} format="YYYY-MM-DD" onChange={(date) => field.onChange(date ? date.format("YYYY-MM-DD") : "")}
+                                        disabledDate={(current) => {
+                                            const cutoff = dayjs().startOf("day");
+                                            return current && current.date() < cutoff.date();
+                                        }} />
+                                )} />
+                            </div>
 
-                    return (
-                        <div key={dayField.id} className="border-[0.5px] border-gray-800 rounded-[10px] flex gap-10 items-center">
-                            <div className="collapse collapse-arrow join-item relative">
-                                <input type="checkbox" id={`day-${dayIndex}`} />
-                                <div className="collapse-title font-semibold flex justify-between items-center">
-                                    {dayField.day}
-                                </div>
-                                <div className="flex justify-end mb-2 z-10">
-                                    <button type="button" className="btn btn-primary rounded-[10px] btn-sm absolute top-3 right-12" onClick={(e) => { e.stopPropagation(); appendSlot({ from: "", to: "" }); }} >
-                                        Add Time Slot
-                                    </button>
-                                </div>
-                                <div className="collapse-content border-t-[0.5px] border-gray-700 !pb-0">
-                                    {slotFields.map((slot, slotIndex) => (
-                                        <div className="flex gap-5 items-center">
-                                            <div key={slot.id} className="grid md:grid-cols-2 gap-4 mb-2 items-end w-full">
-                                                <div>
-                                                    <label className="label">
-                                                        <span className="label-text text-white">From</span>
-                                                    </label>
-                                                    <input type="time" className="input input-bordered w-full"
-                                                        {...register(`BusinessHours.${dayIndex}.slots.${slotIndex}.from` as const, { required: "From is required", })} />
-                                                    {errors.BusinessHours?.[dayIndex]?.slots?.[slotIndex]?.from && (
-                                                        <p className="text-red-500 text-sm">
-                                                            {errors.BusinessHours[dayIndex].slots[slotIndex].from?.message}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <label className="label">
-                                                        <span className="label-text text-white">To</span>
-                                                    </label>
-                                                    <input type="time" className="input input-bordered w-full"
-                                                        {...register(`BusinessHours.${dayIndex}.slots.${slotIndex}.to` as const, { required: "To is required", })} />
-                                                    {errors.BusinessHours?.[dayIndex]?.slots?.[slotIndex]?.to && (
-                                                        <p className="text-red-500 text-sm">
-                                                            {errors.BusinessHours[dayIndex].slots[slotIndex].to?.message}
-                                                        </p>
-                                                    )}
-                                                </div>
 
-                                            </div>
-                                            <button type="button" className="btn rounded-[10px] btn-error btn-sm mt-5" onClick={() => removeSlot(slotIndex)} disabled={slotFields.length === 1} >
-                                                Delete
-                                            </button>
-                                        </div>
-                                    ))}
-                                </div>
+                            <div className="flex flex-col">
+                                <label htmlFor={`BusinessHours.${index}.from`} className="label"  >
+                                    <span className="label-text text-white">
+                                        From Time *
+                                    </span>
+                                </label>
+                                <Controller name={`BusinessHours.${index}.from`} control={control} rules={{ required: true }} render={({ field }) => (
+                                    <TimePicker id={`BusinessHours.${index}.from`} {...field} value={field.value ? dayjs(field.value, "HH:mm") : null} format="HH:mm" onChange={(_, timeString) => field.onChange(timeString)}
+                                        disabledTime={() => {
+                                            const now = dayjs();
+                                            return {
+                                                disabledHours: () =>
+                                                    Array.from({ length: now.hour() }, (_, i) => i),
+                                                disabledMinutes: (selectedHour) =>
+                                                    selectedHour === now.hour()
+                                                        ? Array.from({ length: now.minute() }, (_, i) => i)
+                                                        : [],
+                                                disabledSeconds: (selectedHour, selectedMinute) =>
+                                                    selectedHour === now.hour() && selectedMinute === now.minute()
+                                                        ? Array.from({ length: now.second() }, (_, i) => i)
+                                                        : [],
+                                            };
+                                        }} />
+                                )}
+                                />
+                            </div>
+
+                            <div className="flex flex-col">
+                                <label htmlFor={`BusinessHours.${index}.to`} className="label">
+                                    <span className="label-text text-white">To Time *</span>
+                                </label>
+                                <Controller
+                                    name={`BusinessHours.${index}.to`}
+                                    control={control}
+                                    rules={{ required: true }}
+                                    render={({ field }) => {
+                                        const fromTime = watch(`BusinessHours.${index}.from`);
+                                        const fromDayjs = fromTime ? dayjs(fromTime, "HH:mm") : null;
+
+                                        return (
+                                            <TimePicker
+                                                id={`BusinessHours.${index}.to`}
+                                                {...field}
+                                                value={field.value ? dayjs(field.value, "HH:mm") : null}
+                                                format="HH:mm"
+                                                onChange={(_, timeString) => field.onChange(timeString)}
+                                                disabledTime={(date) => {
+                                                    if (!fromDayjs) return { disabledHours: () => [], disabledMinutes: () => [], disabledSeconds: () => [] };
+                                                    return {
+                                                        disabledHours: () =>
+                                                            Array.from({ length: fromDayjs.hour() }, (_, i) => i),
+                                                        disabledMinutes: (selectedHour: number) =>
+                                                            selectedHour === fromDayjs.hour()
+                                                                ? Array.from({ length: fromDayjs.minute() + 1 }, (_, i) => i)
+                                                                : [],
+                                                        disabledSeconds: () => [],
+                                                    };
+                                                }}
+                                            />
+                                        );
+                                    }}
+                                />
+
+
+
                             </div>
                         </div>
-                    );
-                })}
 
-                <div className="flex justify-end mt-4">
-                    <button type="submit" className="btn btn-primary rounded-[10px]">
-                        Save
-                    </button>
+                        <Button type="primary" danger style={{ backgroundColor: fields.length === 1 ? "#f0f0f0" : "" }} onClick={() => remove(index)} disabled={fields.length === 1}  >
+                            Delete
+                        </Button>
+                    </div>
+                ))}
+
+
+
+                <div className="flex justify-end">
+                    <Button type="primary" style={{ fontSize: '14px', borderRadius: '0.375rem', fontWeight: "500", backgroundColor: "#1677ff", padding: "10px", height: "45px" }} htmlType="submit" className="mt-4">
+                        Save Availability
+                    </Button>
                 </div>
             </form>
         </div>
     );
 };
 
-export default BusinessHoursForm;
+export default DoctorBusinessHoursForm;
