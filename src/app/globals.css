@@ -152,3 +152,21 @@
   }
 }
 
+
+.anticon-clock-circle {
+  color: #6a7282;
+}
+
+.anticon-close-circle {
+  color: #6a7282;
+}
+
+.ant-picker-dropdown {
+  z-index: 999999  !important;
+}
+
+.ant-picker-input > input::placeholder {
+  color: #e2e2e2 !important;  
+  opacity: 1;
+}
+

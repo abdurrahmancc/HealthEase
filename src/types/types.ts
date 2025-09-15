@@ -90,3 +90,27 @@ export interface DoctorClinic  {
     clinicLogosFile?: File[];
     doctorId?: string;
 };
+
+export interface DoctorBusinessHour  {
+    businessHourId?: string;
+    day: string | number;
+    fromUTC: string;
+    toUTC: string;
+    doctorId?: string;
+};
+
+export interface DoctorSpecialityService  {
+    id?: string;
+    speciality: string;
+    service: string;
+    price: number;
+    about: string;
+    doctorId?: string;
+};
+
+export interface AppointmentSlot {
+  slotId?: string;
+  from: string;
+  to: string;
+  doctorId?: string;
+};
