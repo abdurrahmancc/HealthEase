@@ -30,14 +30,14 @@ export interface UserDto {
     countryCode?: string;
 }
 
-export interface Language{
+export interface Language {
     id: number;
     langCode: string;
     languageName: string;
 }
 
 
-export interface  DoctorBasicInfo {
+export interface DoctorBasicInfo {
     firstName: string;
     lastName: string;
     displayName: string;
@@ -47,7 +47,7 @@ export interface  DoctorBasicInfo {
     languagesSpoken: string[];
 };
 
-export interface  DoctorMembership{
+export interface DoctorMembership {
     membershipId?: string;
     title: string;
     about: string;
@@ -70,7 +70,7 @@ export interface DoctorExperience {
     doctorId?: string;
 };
 
-export interface DoctorEducation  {
+export interface DoctorEducation {
     educationId?: string;
     instituteName: string;
     course: string;
@@ -81,7 +81,7 @@ export interface DoctorEducation  {
     doctorId?: string;
 };
 
-export interface DoctorClinic  {
+export interface DoctorClinic {
     clinicId?: string;
     clinicName: string;
     location: string;
@@ -91,7 +91,7 @@ export interface DoctorClinic  {
     doctorId?: string;
 };
 
-export interface DoctorBusinessHour  {
+export interface DoctorBusinessHour {
     businessHourId?: string;
     day: string | number;
     fromUTC: string;
@@ -99,7 +99,7 @@ export interface DoctorBusinessHour  {
     doctorId?: string;
 };
 
-export interface DoctorSpecialityService  {
+export interface DoctorSpecialityService {
     id?: string;
     speciality: string;
     service: string;
@@ -109,8 +109,15 @@ export interface DoctorSpecialityService  {
 };
 
 export interface AppointmentSlot {
-  slotId?: string;
-  from: string;
-  to: string;
-  doctorId?: string;
+    slotId?: string;
+    from: string;
+    to: string;
+    doctorId?: string;
 };
+
+export interface SocialMideaType {
+    id?: number | string;
+    socialMedia: string;
+    link: string;
+    doctorId?: string,
+}
