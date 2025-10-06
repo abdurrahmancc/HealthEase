@@ -124,13 +124,11 @@ const DoctorExperienceForm = ({ experiences }: DoctorExperienceFormProps) => {
             const response = await fetch(`${process.env.NEXT_PUBLIC_baseURL}/v1/api/Doctor/GetExperiences`, { credentials: "include" });
             if (response.ok) {
                 const data = await response.json();
-                console.log("data", data)
                 const safeExperiences = data.data.map(getSafeExperience);
                 reset({ Experiences: safeExperiences });
             }
         } catch (error: any) {
-            console.error(error);
-            toast.error(error?.response?.data?.message || "Something went wrong");
+            toast.error(error?.response?.data?.errors[0] || "Something went wrong");
         } finally {
             setUploadLoading(false);
             setPreviewUrl(null);

@@ -41,7 +41,7 @@ const DoctorSettings = ({ languages, basicInfo, memberships, user: ssgUser }: Do
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const { register, handleSubmit, control, formState: { errors }, } = useForm<DoctorBasicInfo>({
+    const { register, handleSubmit, reset, control, formState: { errors }, } = useForm<DoctorBasicInfo>({
         defaultValues: {
             firstName: basicInfo?.firstName || "",
             lastName: basicInfo?.lastName || "",
@@ -51,6 +51,19 @@ const DoctorSettings = ({ languages, basicInfo, memberships, user: ssgUser }: Do
             languagesSpoken: basicInfo?.languagesSpoken || []
         },
     });
+
+    useEffect(() => {
+        if (reduxUser) {
+            reset({
+                firstName: reduxUser.firstName || "",
+                lastName: reduxUser.lastName || "",
+                designation: basicInfo?.designation || "",
+                phoneNumber: basicInfo?.phoneNumber || "",
+                email: reduxUser.email || "",
+                languagesSpoken: basicInfo?.languagesSpoken || []
+            });
+        }
+    }, [reduxUser, basicInfo, reset]);
 
     const onSubmit = async (data: DoctorBasicInfo) => {
         try {
@@ -83,7 +96,7 @@ const DoctorSettings = ({ languages, basicInfo, memberships, user: ssgUser }: Do
                                 <label htmlFor='firstName' className="label">
                                     <span className="label-text text-white">First Name *</span>
                                 </label>
-                                <input id='firstName' {...register("firstName", { required: "First Name is required" })}
+                                <input  id='firstName' {...register("firstName", { required: "First Name is required" })}
                                     className="input input-bordered w-full bg-base-100 text-white border-gray-500" />
                                 {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName.message}</p>}
                             </div>
@@ -92,7 +105,7 @@ const DoctorSettings = ({ languages, basicInfo, memberships, user: ssgUser }: Do
                                 <label htmlFor='lastName' className="label">
                                     <span className="label-text text-white">Last Name *</span>
                                 </label>
-                                <input {...register("lastName", { required: "Last Name is required" })}
+                                <input  {...register("lastName", { required: "Last Name is required" })}
                                     className="input input-bordered w-full bg-base-100 text-white border-gray-500" />
                                 {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName.message}</p>}
                             </div>
@@ -122,14 +135,14 @@ const DoctorSettings = ({ languages, basicInfo, memberships, user: ssgUser }: Do
                                     <span className="label-text text-white">Email Address *</span>
                                 </label>
 
-                                <input readOnly value={reduxUser?.email}  {...register("email", { required: "Email is required", pattern: { value: /^\S+@\S+$/i, message: "Invalid email" }, })}
+                                <input readOnly  {...register("email", { required: "Email is required", pattern: { value: /^\S+@\S+$/i, message: "Invalid email" }, })}
                                     className="input input-bordered w-full bg-base-100 text-white border-gray-500" />
                                 {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
                             </div>
 
                             <Controller
                                 name="languagesSpoken"
-                                control={control}                                
+                                control={control}
                                 render={({ field }) => {
                                     const addLanguage = (lang: string) => {
                                         field.onChange([...field.value, lang]);
